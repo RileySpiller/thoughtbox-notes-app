@@ -1,0 +1,17 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["sfo1"],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://asezgdxswiubawwaddny.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzZXpnZHhzd2l1YmF3d2FkZG55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2Nzg4OTUsImV4cCI6MjA1NjI1NDg5NX0.vow5xdSh2FmOZtcJXdEU64TXcB8Q1G933zZOOHcQkEA"
+  }
+}
