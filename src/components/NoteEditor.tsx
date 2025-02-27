@@ -15,9 +15,32 @@ import { motion } from "framer-motion";
 // Add type definitions for the Web Speech API
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+    currentRecognition?: SpeechRecognition;
   }
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onend: () => void;
+}
+
+interface SpeechRecognitionEvent {
+  results: {
+    item(index: number): { item(index: number): { transcript: string } };
+    [index: number]: {
+      isFinal: boolean;
+      [index: number]: { transcript: string };
+    };
+    length: number;
+  };
+  resultIndex: number;
 }
 
 interface NoteEditorProps {
@@ -125,8 +148,8 @@ export default function NoteEditor({
 
   const toggleVoiceRecognition = (target: "title" | "content") => {
     // Stop any existing recognition
-    if ((window as any).currentRecognition) {
-      (window as any).currentRecognition.stop();
+    if (window.currentRecognition) {
+      window.currentRecognition.stop();
     }
 
     if (
@@ -165,7 +188,7 @@ export default function NoteEditor({
 
     let finalTranscript = "";
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       let interimTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -197,12 +220,12 @@ export default function NoteEditor({
     recognition.start();
 
     // Store recognition instance to stop it later
-    (window as any).currentRecognition = recognition;
+    window.currentRecognition = recognition;
   };
 
   const stopVoiceRecognition = () => {
-    if ((window as any).currentRecognition) {
-      (window as any).currentRecognition.stop();
+    if (window.currentRecognition) {
+      window.currentRecognition.stop();
     }
     setIsListening(false);
   };
@@ -210,8 +233,8 @@ export default function NoteEditor({
   useEffect(() => {
     return () => {
       // Clean up recognition when component unmounts
-      if ((window as any).currentRecognition) {
-        (window as any).currentRecognition.stop();
+      if (window.currentRecognition) {
+        window.currentRecognition.stop();
       }
     };
   }, []);
